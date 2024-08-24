@@ -24,7 +24,7 @@ class _WebServices implements WebServices {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<List<UsersModels>> getAllUsersModels() async {
+  Future<List<UsersModels>> getAllUsersSrevices() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};

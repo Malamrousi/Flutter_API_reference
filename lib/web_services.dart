@@ -9,5 +9,5 @@ abstract class WebServices {
   factory WebServices(Dio dio, {String baseUrl}) = _WebServices;
 
   @GET('users')
-  Future<List<UsersModels>> getAllUsersModels();
+  Future<List<UsersModels>> getAllUsersSrevices();
 }

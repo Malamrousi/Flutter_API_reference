@@ -72,9 +72,70 @@ When creating functions to interact with an API in your services, the first step
 
   ```dart
   Future<List<UsersModels>> getUserServices() ;
+  
+
   ``` 
 - **If the Data is an Object:**  
   If the API returns a single object, the function should return a Future that contains just one instance of your model object. For example:
   ```dart
   Future<UsersModels> getUserServices();
   ``` 
+## Create repo to get data from Services
+
+ #### Dealing with data of type Array
+ ### Repository Implementation
+
+The `MyRepo` class serves as an intermediary between the data source (API) and the application. It utilizes the `WebServices` class to fetch data from the API.
+
+- **Class Definition:**
+  - `MyRepo` takes an instance of `WebServices` through its constructor.
+  
+- **Data Fetching:**
+  - The `getAllUsersModelsRepo` method is an asynchronous function that retrieves a list of users.
+  - It calls the `getAllUsersServices` method from `WebServices` to fetch the data.
+  - The API response is mapped to a list of `UsersModels` objects using `UsersModels.fromJson`.
+
+  ```dart
+  class MyRepo {
+  WebServices webServices;
+  MyRepo({
+    required this.webServices,
+  });
+
+  Future<List<UsersModels>> getAllUsersModelsRepo() async {
+    var response = await webServices.getAllUsersSrevices();
+
+    return response.map((e)=>UsersModels.fromJson(e.toJson())).toList();
+  }
+  }
+  ``` 
+
+This approach ensures that the data fetched from the API is converted into well-defined model objects, making it easier to manage and use within the application.
+
+### Code Explanation
+
+This line of code performs a specific operation to transform a list of JSON objects into a list of `UsersModels` objects in Dart. Let’s break it down step by step:
+
+```dart
+return response.map((e) => UsersModels.fromJson(e.toJson())).toList();
+ ```
+### Code Breakdown
+- **`response.map((e) => ... )`:**
+  - `response` is assumed to be a collection (likely a list) that contains items of a certain type, possibly objects that were deserialized from JSON.
+  - `map` is a function that iterates over each element in `response` and applies the function inside it (in this case, the function is `(e) => UsersModels.fromJson(e.toJson())`).
+  - For each element `e` in `response`, the code inside `map` will be executed.
+
+- **`e.toJson()`:**
+  - `e` represents an element in the `response` list.
+  - `toJson()` is a method that converts the `e` object into a JSON format, typically returning a `Map<String, dynamic>`. This step is necessary if `e` is not already in JSON format but is an instance of a class with a `toJson()` method that converts it to JSON.
+
+- **`UsersModels.fromJson(...)`:**
+  - `UsersModels.fromJson` is a factory constructor that takes a JSON map as input and creates an instance of `UsersModels`.
+  - The JSON object produced by `e.toJson()` is passed into this constructor to create a `UsersModels` object.
+
+- **`.toList()`:**
+  - `map` returns an `Iterable`, which is a kind of collection that can be iterated over, but is not a list.
+  - `.toList()` converts the `Iterable` produced by `map` into a `List`, which is a more common and usable collection type in Dart.
+
+
+ 
