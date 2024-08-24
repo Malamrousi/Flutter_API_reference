@@ -8,6 +8,8 @@ part 'web_services.g.dart';
 abstract class WebServices {
   factory WebServices(Dio dio, {String baseUrl}) = _WebServices;
 
+
+
   @GET('users')
   Future<List<UsersModels>> getAllUsersSrevices();
 }
