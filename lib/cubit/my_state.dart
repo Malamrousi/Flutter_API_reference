@@ -12,3 +12,11 @@ final class GetAllUsers extends MyState {
     required this.allUserList,
   });
 }
+
+final class GetAllUsersById extends MyState {
+  final UsersModels userDetiels;
+
+  GetAllUsersById({
+    required this.userDetiels,
+  });
+}

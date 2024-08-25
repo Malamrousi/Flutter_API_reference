@@ -9,10 +9,16 @@ class MyRepo {
     required this.webServices,
   });
 
-  Future<UsersModels> getAllUsersModelsRepo() async {
+  Future<List<UsersModels>> getAllUsersModelsRepo() async {
     var response = await webServices.getAllUsersSrevices();
 
-    return response;
+    return response.map((e) => UsersModels.fromJson(e.toJson())).toList();
+  }
+
+  Future<UsersModels> getUserByIRepo(int userId) async {
+    var response = await webServices.getUserById(userId);
+
+    return UsersModels.fromJson(response.toJson());
   }
 }
 

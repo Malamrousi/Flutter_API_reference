@@ -160,7 +160,56 @@ In this scenario, the data returned from the API is a single object rather than 
 ```dart
 Future<UsersModels> getAllUsersModelsRepo() async {
   var response = await webServices.getAllUsersServices();
-  return response;
+    return UsersModels.fromJson(response.toJson());
 }
 ```
+
+### Using `@Path` with Retrofit
+
+When working with RESTful APIs, it's common to need to pass dynamic segments in the URL path to retrieve specific resources. Retrofit provides the `@Path` annotation to handle these scenarios.
+
+#### Example: Fetching a User by ID
+
+[GoRest API - Get User by ID](https://gorest.co.in/public/v2/users/6940663)
+
+
+In this example, we want to fetch a user by their unique ID from the API. Here's how it is done:
+
+1. **Defining the API Call in `WebServices`:**
+   - We define a method `getUserById` that makes a GET request to the `/users/{id}` endpoint.
+   - The `{id}` part of the path is dynamic, meaning it will be replaced with the actual user ID when the method is called.
+   - The `@Path()` annotation is used to bind the method parameter `id` to the `{id}` path segment.
+
+   ```dart
+   @GET('users/{id}')
+   Future<UsersModels> getUserById(@Path() int id);
+   ```
+  ### Call API In Repo
+
+   ```dart
+
+  Future<UsersModels> getUserByIRepo(int userId) async {
+    var response = await webServices.getUserById(userId);
+
+    return UsersModels.fromJson(response.toJson());
+  }
+   ```
+   ### Handling Path Variables with Incorrect Parameter Names in Retrofit
+
+When working with Retrofit and defining a `@Path` variable, it's essential to ensure that the parameter name used in the method matches the placeholder in the URL path. However, if the parameter name in the method is not ideal or incorrectly named, you can still bind it to the correct placeholder in the URL.
+
+#### Example:
+
+```dart
+@GET('users/{id}')
+Future<UsersModels> getUserById(@Path('id') int iddddddd);
+```
+In this example:
+The placeholder `{id}` in the URL path is correctly defined.
+The method parameter is named iddddddd, which is not ideal, but by explicitly binding it to the `{id}` path segment using @Path('id'), Retrofit knows that `iddddddd` should be used to replace `{id}` in the URL.
+
+
+
+
+
 

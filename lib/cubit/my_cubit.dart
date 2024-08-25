@@ -14,4 +14,9 @@ class MyCubit extends Cubit<MyState> {
         .getAllUsersModelsRepo()
         .then((getUserList) => emit(GetAllUsers(allUserList: getUserList)));
   }
+
+  emaitGetUserByIdDetiles(int idValue) {
+    myRepo.getUserByIRepo(idValue).then(((getUserByIdList) =>
+        emit(GetAllUsersById(userDetiels: getUserByIdList))));
+  }
 }

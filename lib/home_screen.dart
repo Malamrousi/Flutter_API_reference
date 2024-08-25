@@ -13,12 +13,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<UsersModels> usersList = [];
+  late UsersModels usersModelsDetiels;
 
   @override
   void initState() {
     super.initState();
 
-    BlocProvider.of<MyCubit>(context).emitGetAllUser();
+    // BlocProvider.of<MyCubit>(context).emitGetAllUser();
+    BlocProvider.of<MyCubit>(context).emaitGetUserByIdDetiles(6940663);
   }
 
   @override
@@ -30,30 +32,46 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           BlocBuilder<MyCubit, MyState>(builder: (context, state) {
-            if (state is GetAllUsers) {
-              usersList = (state).allUserList;
-              return ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(8),
-
-                itemCount: usersList.length,
-                itemBuilder: (context, int index) {
-                
-                return Container(
-                  height: 50,
-                  child: Center(
-                    child: Text(usersList[index].name.toString()),
-                  ),
-                );
-              });
+            if (state is GetAllUsersById) {
+              // هنا يتم جلب التفاصيل الخاصة بالمستخدم من خلال state
+              UsersModels usersModelsDetiels = state.userDetiels;
+              return Container(
+                height: 50,
+                child: Center(
+                  child: Text(usersModelsDetiels.name.toString()),
+                ),
+              );
             } else {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
-          })
+          }),
         ],
       ),
     );
   }
 }
+// BlocBuilder<MyCubit, MyState>(builder: (context, state) {
+//   if (state is GetAllUsers) {
+//     usersList = (state).allUserList;
+//     return ListView.builder(
+//       shrinkWrap: true,
+//       padding: const EdgeInsets.all(8),
+
+//       itemCount: usersList.length,
+//       itemBuilder: (context, int index) {
+
+//       return Container(
+//         height: 50,
+//         child: Center(
+//           child: Text(usersList[index].name.toString()),
+//         ),
+//       );
+//     });
+//   } else {
+//     return const Center(
+//       child: CircularProgressIndicator(),
+//     );
+//   }
+// })

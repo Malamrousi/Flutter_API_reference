@@ -11,6 +11,7 @@ class UsersModels {
   final String gender;
   final String status;
 
+ 
 
   UsersModels({
    required this.id,
