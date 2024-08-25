@@ -11,5 +11,5 @@ abstract class WebServices {
 
 
   @GET('users')
-  Future<List<UsersModels>> getAllUsersSrevices();
+  Future<UsersModels> getAllUsersSrevices();
 }

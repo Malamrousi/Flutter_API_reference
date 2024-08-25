@@ -137,5 +137,30 @@ return response.map((e) => UsersModels.fromJson(e.toJson())).toList();
   - `map` returns an `Iterable`, which is a kind of collection that can be iterated over, but is not a list.
   - `.toList()` converts the `Iterable` produced by `map` into a `List`, which is a more common and usable collection type in Dart.
 
+### Handling Data Returned as an Object
 
- 
+In this scenario, the data returned from the API is a single object rather than an array. Here's how the code was structured to handle this:
+
+1. **Service Layer (`web_services.dart`)**:
+   - A method `getAllUsersServices` was defined to fetch a single `UsersModels` object from the API.
+   - The `@GET('users')` annotation specifies the endpoint, and the method returns a `Future<UsersModels>`, indicating that it will eventually return a `UsersModels` object.
+
+   ```dart
+   @GET('users')
+   Future<UsersModels> getAllUsersServices();
+    ``` 
+    Repository Layer (my_repo.dart):
+
+### Repository Layer (`my_repo.dart`):
+
+- In the `MyRepo` class, the `getAllUsersModelsRepo` method was defined to interact with the service layer.
+- This method calls `getAllUsersServices` from the `WebServices` class and awaits the response.
+- The response, which is a `UsersModels` object, is then returned as-is.
+
+```dart
+Future<UsersModels> getAllUsersModelsRepo() async {
+  var response = await webServices.getAllUsersServices();
+  return response;
+}
+```
+
