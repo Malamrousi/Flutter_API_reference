@@ -19,8 +19,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    // BlocProvider.of<MyCubit>(context).emitGetAllUser();
-    BlocProvider.of<MyCubit>(context).emaitGetUserByIdDetiles(6940663);
+    BlocProvider.of<MyCubit>(context).emitCreateNewUSER(UsersModels(
+        id: 45750256,
+        name: 'Kayn Mohammed Al-amrousi',
+        email: 'keyanmohammed@gmai.com',
+        gender: 'famle',
+        status: 'inactive'));
   }
 
   @override
@@ -32,9 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           BlocBuilder<MyCubit, MyState>(builder: (context, state) {
-            if (state is GetAllUsersById) {
+            if (state is CreateNewUser) {
               // هنا يتم جلب التفاصيل الخاصة بالمستخدم من خلال state
-              UsersModels usersModelsDetiels = state.userDetiels;
+              UsersModels usersModelsDetiels = state.newUser;
               return Container(
                 height: 50,
                 child: Center(

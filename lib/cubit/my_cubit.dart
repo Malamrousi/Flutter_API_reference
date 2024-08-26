@@ -19,4 +19,10 @@ class MyCubit extends Cubit<MyState> {
     myRepo.getUserByIRepo(idValue).then(((getUserByIdList) =>
         emit(GetAllUsersById(userDetiels: getUserByIdList))));
   }
+
+  emitCreateNewUSER(UsersModels newUsers) {
+    myRepo
+        .createUser(newUsers)
+        .then((value) => emit(CreateNewUser(newUser: value)));
+  }
 }

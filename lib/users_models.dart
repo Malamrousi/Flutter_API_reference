@@ -11,14 +11,12 @@ class UsersModels {
   final String gender;
   final String status;
 
- 
-
   UsersModels({
-   required this.id,
-   required this.name,
-   required this.email,
-  required  this.gender,
-  required  this.status,
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.gender,
+    required this.status,
   });
 
   factory UsersModels.fromJson(Map<String, dynamic> json) =>
@@ -26,5 +24,7 @@ class UsersModels {
 
   Map<String, dynamic> toJson() => _$UsersModelsToJson(this);
 }
+
+
 
 

@@ -20,6 +20,10 @@ class MyRepo {
 
     return UsersModels.fromJson(response.toJson());
   }
+
+  Future<UsersModels> createUser(UsersModels newUseer) async {
+    return await webServices.postUser(newUseer, 'Bearer b33876c9f86939d0d1bb4fda3f5973092cce99e9cddd3a4f03320a7cd04e3144	');
+  }
 }
 
 

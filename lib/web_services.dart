@@ -13,4 +13,10 @@ abstract class WebServices {
 
   @GET('users/{id}')
   Future<UsersModels> getUserById(@Path('id') int iddddddd);
+
+  @POST('users')
+  Future<UsersModels> postUser(
+      @Body() UsersModels newUsers, @Header('Authorization') String token);
+  @DELETE('users/{id}')
+  Future<dynamic> deleteUser(@Path('id') int id , @Header('Authorization') String token  );
 }

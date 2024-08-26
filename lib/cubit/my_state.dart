@@ -19,4 +19,15 @@ final class GetAllUsersById extends MyState {
   GetAllUsersById({
     required this.userDetiels,
   });
+
+
+}
+
+
+  final class CreateNewUser extends MyState {
+  final UsersModels newUser;
+
+  CreateNewUser({
+    required this.newUser,
+  });
 }
