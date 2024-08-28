@@ -1,9 +1,11 @@
-import 'package:api_learn/my_repo.dart';
-import 'package:api_learn/users_models.dart';
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 
-part 'my_state.dart';
+
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../my_repo.dart';
+import '../users_models.dart';
+import 'my_state.dart';
 
 class MyCubit extends Cubit<MyState> {
   final MyRepo myRepo;
@@ -13,11 +15,12 @@ class MyCubit extends Cubit<MyState> {
     myRepo
         .getAllUsersModelsRepo()
         .then((getUserList) => emit(GetAllUsers(allUserList: getUserList)));
+
   }
 
   emaitGetUserByIdDetiles(int idValue) {
     myRepo.getUserByIRepo(idValue).then(((getUserByIdList) =>
-        emit(GetAllUsersById(userDetiels: getUserByIdList))));
+        emit(GetAllUsersById(userData: getUserByIdList))));
   }
 
   emitCreateNewUSER(UsersModels newUsers) {

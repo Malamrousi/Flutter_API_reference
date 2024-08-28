@@ -3,6 +3,7 @@ import 'package:api_learn/users_models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'cubit/my_cubit.dart';
+import 'cubit/my_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,9 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           BlocBuilder<MyCubit, MyState>(builder: (context, state) {
             if (state is CreateNewUser) {
-              // هنا يتم جلب التفاصيل الخاصة بالمستخدم من خلال state
               UsersModels usersModelsDetiels = state.newUser;
-              return Container(
+              return SizedBox(
                 height: 50,
                 child: Center(
                   child: Text(usersModelsDetiels.name.toString()),
@@ -50,32 +50,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: CircularProgressIndicator(),
               );
             }
-          }),
+          }
+          ),
+          Image.asset('assets/images/hypothesis.png')
         ],
       ),
     );
   }
 }
-// BlocBuilder<MyCubit, MyState>(builder: (context, state) {
-//   if (state is GetAllUsers) {
-//     usersList = (state).allUserList;
-//     return ListView.builder(
-//       shrinkWrap: true,
-//       padding: const EdgeInsets.all(8),
 
-//       itemCount: usersList.length,
-//       itemBuilder: (context, int index) {
-
-//       return Container(
-//         height: 50,
-//         child: Center(
-//           child: Text(usersList[index].name.toString()),
-//         ),
-//       );
-//     });
-//   } else {
-//     return const Center(
-//       child: CircularProgressIndicator(),
-//     );
-//   }
-// })

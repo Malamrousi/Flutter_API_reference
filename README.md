@@ -244,6 +244,7 @@ Future<UsersModels> postUser(@Body() UsersModels newUsers, @Header('Authorizatio
 - **`@Header('Authorization') String token`:**
   - The `@Header` annotation is used to add additional information to the HTTP request, often for authentication or other control purposes. Here, the `Authorization` header is used to send a token that verifies the identity of the requestor.
   - **Usage**: The token is typically required by the server to authenticate the request, ensuring that the operation is performed by an authorized user.
+  
 ### Explanation of the `createUser` Function
 
 The `createUser` function is an asynchronous function that is responsible for creating a new user by sending the user's data to a server via an HTTP POST request. Here’s what happens step by step:

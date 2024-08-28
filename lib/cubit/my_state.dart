@@ -1,6 +1,5 @@
-part of 'my_cubit.dart';
+import 'package:api_learn/users_models.dart';
 
-@immutable
 sealed class MyState {}
 
 final class MyInitial extends MyState {}
@@ -14,16 +13,13 @@ final class GetAllUsers extends MyState {
 }
 
 final class GetAllUsersById extends MyState {
-  final UsersModels userDetiels;
-
+final UsersModels userData;
   GetAllUsersById({
-    required this.userDetiels,
+    required this.userData,
   });
 
 
 }
-
-
   final class CreateNewUser extends MyState {
   final UsersModels newUser;
 
@@ -31,3 +27,4 @@ final class GetAllUsersById extends MyState {
     required this.newUser,
   });
 }
+
