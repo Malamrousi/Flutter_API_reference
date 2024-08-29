@@ -262,3 +262,251 @@ The `createUser` function is an asynchronous function that is responsible for cr
 - **Returning the Result:**
   - The function uses `await` to wait for the POST request to complete before returning the result.
   - The result returned is a `UsersModels` object, representing the newly created user after the operation is successfully completed on the server.
+
+  
+## API Error Handling
+
+
+In mobile app development, handling errors gracefully is crucial to provide a smooth and user-friendly experience. When working with Flutter, Dio, a powerful HTTP client library, offers robust mechanisms for handling errors during network requests. In this article, we will explore how to effectively handle errors in Flutter using Dio, ensuring that your app remains reliable and user-friendly.
+
+The API error handling approach described here is based on insights from [this article on Medium by Mohammad Joumani](https://medium.com/@mohammadjoumani/error-handling-in-flutter-a1dfe81a2e0).
+
+
+### Dio Configuration and Instance Creation
+
+```dart
+const String APPLICATION_JSON = "application/json";
+const String CONTENT_TYPE = "content-type";
+const String ACCEPT = "accept";
+const String AUTHORIZATION = "authorization";
+const String DEFAULT_LANGUAGE = "en";
+const String TOKEN = "token";
+const String BASE_URL = "https://api.example.com";
+
+class DioFactory {
+  Future<Dio> getDio() async {
+    Dio dio = Dio();
+
+    Map<String, String> headers = {
+      CONTENT_TYPE: APPLICATION_JSON,
+      ACCEPT: APPLICATION_JSON,
+      AUTHORIZATION: TOKEN,
+      DEFAULT_LANGUAGE: DEFAULT_LANGUAGE
+    };
+
+    dio.options = BaseOptions(
+        baseUrl: BASE_URL,
+        headers: headers,
+        receiveTimeout: Constants.apiTimeOut,
+        sendTimeout: Constants.apiTimeOut,
+    );
+
+    if (!kReleaseMode) {
+      dio.interceptors.add(PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseHeader: true,
+      ));
+    }
+
+    return dio;
+  }
+}
+
+```
+## Global Error Handling with Interceptors
+Use Dio interceptors to handle errors globally, providing consistent error handling throughout your app.
+
+#### DataSource Enum
+This is an enumeration that defines various data sources, each associated with a specific type of failure. It to be used for mapping error types to failure responses.
+
+```dart
+enum DataSource {
+  SUCCESS,
+  NO_CONTENT,
+  BAD_REQUEST,
+  FORBIDDEN,
+  UNAUTORISED,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
+  CONNECT_TIMEOUT,
+  CANCEL,
+  RECIEVE_TIMEOUT,
+  SEND_TIMEOUT,
+  CACHE_ERROR,
+  NO_INTERNET_CONNECTION,
+  DEFAULT
+}
+```
+#### ResponseCode class
+This class defines static integer constants representing various HTTP status codes, both standard HTTP status codes and custom ones for local status codes.
+
+```dart
+class ResponseCode {
+  static const int SUCCESS = 200; // success with data
+  static const int NO_CONTENT = 201; // success with no data (no content)
+  static const int BAD_REQUEST = 400; // failure, API rejected request
+  static const int UNAUTORISED = 401; // failure, user is not authorised
+  static const int FORBIDDEN = 403; //  failure, API rejected request
+  static const int INTERNAL_SERVER_ERROR = 500; // failure, crash in server side
+  static const int NOT_FOUND = 404; // failure, not found
+  static const int API_LOGIC_ERROR = 422; 
+
+  // local status code
+  static const int CONNECT_TIMEOUT = -1;
+  static const int CANCEL = -2;
+  static const int RECIEVE_TIMEOUT = -3;
+  static const int SEND_TIMEOUT = -4;
+  static const int CACHE_ERROR = -5;
+  static const int NO_INTERNET_CONNECTION = -6;
+  static const int DEFAULT = -7;
+}
+
+
+```
+
+#### ResponseMessage class
+
+This class defines static string constants representing response messages for different HTTP status codes. These messages to be internationalized (using localization).
+
+```dart
+class ResponseMessage {
+  static const String NO_CONTENT =
+      ApiErrors.noContent; // success with no data (no content)
+  static const String BAD_REQUEST =
+      ApiErrors.badRequestError; // failure, API rejected request
+  static const String UNAUTORISED =
+      ApiErrors.unauthorizedError; // failure, user is not authorised
+  static const String FORBIDDEN =
+      ApiErrors.forbiddenError; //  failure, API rejected request
+  static const String INTERNAL_SERVER_ERROR =
+      ApiErrors.internalServerError; // failure, crash in server side
+  static const String NOT_FOUND =
+      ApiErrors.notFoundError; // failure, crash in server side
+
+  // local status code
+  static String CONNECT_TIMEOUT = ApiErrors.timeoutError;
+  static String CANCEL = ApiErrors.defaultError;
+  static String RECIEVE_TIMEOUT = ApiErrors.timeoutError;
+  static String SEND_TIMEOUT = ApiErrors.timeoutError;
+  static String CACHE_ERROR = ApiErrors.cacheError;
+  static String NO_INTERNET_CONNECTION = ApiErrors.noInternetError;
+  static String DEFAULT = ApiErrors.defaultError;
+}
+```
+
+#### DataSourceExtension
+This extension adds a method called getFailure to the DataSource enum. This method returns a Failure object based on the value of the enum.
+
+```dart
+extension DataSourceExtension on DataSource {
+  Failure getFailure() {
+    var mContext = navigatorKey!.currentState!.context;
+    switch (this) {
+      case DataSource.SUCCESS:
+        return Failure(ResponseCode.SUCCESS, ResponseMessage.SUCCESS.tr(mContext));
+      case DataSource.NO_CONTENT:
+        return Failure(ResponseCode.NO_CONTENT, ResponseMessage.NO_CONTENT.tr(mContext));
+      case DataSource.BAD_REQUEST:
+        return Failure(ResponseCode.BAD_REQUEST, ResponseMessage.BAD_REQUEST.tr(mContext));
+      case DataSource.FORBIDDEN:
+        return Failure(ResponseCode.FORBIDDEN, ResponseMessage.FORBIDDEN.tr(mContext));
+      case DataSource.UNAUTORISED:
+        return Failure(ResponseCode.UNAUTORISED, ResponseMessage.UNAUTORISED.tr(mContext));
+      case DataSource.NOT_FOUND:
+        return Failure(ResponseCode.NOT_FOUND, ResponseMessage.NOT_FOUND.tr(mContext));
+      case DataSource.INTERNAL_SERVER_ERROR:
+        return Failure(ResponseCode.INTERNAL_SERVER_ERROR,
+            ResponseMessage.INTERNAL_SERVER_ERROR.tr(mContext));
+      case DataSource.CONNECT_TIMEOUT:
+        return Failure(
+            ResponseCode.CONNECT_TIMEOUT, ResponseMessage.CONNECT_TIMEOUT.tr(mContext));
+      case DataSource.CANCEL:
+        return Failure(ResponseCode.CANCEL, ResponseMessage.CANCEL.tr(mContext));
+      case DataSource.RECIEVE_TIMEOUT:
+        return Failure(
+            ResponseCode.RECIEVE_TIMEOUT, ResponseMessage.RECIEVE_TIMEOUT.tr(mContext));
+      case DataSource.SEND_TIMEOUT:
+        return Failure(ResponseCode.SEND_TIMEOUT, ResponseMessage.SEND_TIMEOUT.tr(mContext));
+      case DataSource.CACHE_ERROR:
+        return Failure(ResponseCode.CACHE_ERROR, ResponseMessage.CACHE_ERROR.tr(mContext));
+      case DataSource.NO_INTERNET_CONNECTION:
+        return Failure(ResponseCode.NO_INTERNET_CONNECTION,
+            ResponseMessage.NO_INTERNET_CONNECTION.tr(mContext));
+      case DataSource.DEFAULT:
+        return Failure(ResponseCode.DEFAULT, ResponseMessage.DEFAULT.tr(mContext));
+    }
+  }
+}
+```
+
+
+### ErrorHandler
+This class implements the `Exception` interface, indicating its purpose for handling exceptions. It contains a `late` field named `failure` of type `Failure`, which is not initialized immediately. The `ErrorHandler` class includes a constructor named `handle`, which takes a dynamic `error` parameter. This constructor handles various exceptions by invoking the `_handleError` function based on the error type. If the error is of type `DioException`, the function determines the failure; otherwise, it defaults to a value provided by the `DataSource` class.
+
+```dart
+class ErrorHandler implements Exception {
+  late ErrorModel apiErrorModel;
+
+  ErrorHandler.handle(dynamic error) {
+    if (error is DioException) {
+      // dio error so its an error from response of the API or from dio itself
+      apiErrorModel = _handleError(error);
+    } else {
+      // default error
+      apiErrorModel = DataSource.DEFAULT.getFailure();
+    }
+  }
+}
+```
+####  Handling Errors in Specific Requests
+While global error handling is essential, you can also handle errors on a per-request basis. Use try-catch blocks around Dio requests to capture errors and respond accordingly.
+
+```dart
+Future<Either<Failure, ResponseDto>> getResponse(RequestDto requestDto) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        ...
+        .
+        .
+        return Right(response);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+  ```
+  #### Displaying User-Friendly Error Messages
+  ```dart
+///English Message
+"success": "success",
+"bad_request_error": "bad request. try again later",
+"no_content": "success with not content",
+"forbidden_error": "forbidden request. try again later",
+"unauthorized_error": "user unauthorized, try again later",
+"not_found_error": "url not found, try again later",
+"conflict_error": "conflict found, try again later",
+"internal_server_error": "some thing went wrong, try again later",
+"unknown_error": "some thing went wrong, try again later",
+"timeout_error": "time out, try again late",
+"default_error": "some thing went wrong, try again later",
+"cache_error": "cache error, try again later",
+"no_internet_error": "Please check your internet connection"
+
+//Arabic Message
+"success": "تم بنجاح",
+"bad_request_error": "طلب غير صالح. حاول مرة أخرى لاحقًا",
+"no_content": "success with not content",
+"forbidden_error": "طلب محظور. حاول مرة أخرى لاحقًا",
+"unauthorized_error": "user unauthorized, try again later",
+"not_found_error": "url غير موجود , حاول مرة أخرى لاحقًا",
+"conflict_error": "تم العثور على تعارض , حاول مرة أخرى لاحقًا",
+"internal_server_error": "حدث خطأ ما , حاول مرة أخرى لاحقًا",
+"unknown_error": "حدث خطأ ما , حاول مرة أخرى لاحقًا",
+"timeout_error": "انتهت المهلة , حاول مرة أخرى متأخرًا",
+"default_error": "حدث خطأ ما , حاول مرة أخرى لاحقًا",
+"cache_error": "خطأ في ذاكرة التخزين المؤقت , حاول مرة أخرى لاحقًا",
+"no_internet_error": "يُرجى التحقق من اتصالك بالإنترنت"
+ ```
